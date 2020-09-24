@@ -8,29 +8,29 @@ load_dotenv(verbose=True)
 API_KEY = os.getenv('NUT_API_KEY')
 nutrient_list = []
 
-st = 1
-end = 10
-i = 17
+st = 1001
+end = 2000
+i = 1017
 url = f'http://openapi.foodsafetykorea.go.kr/api/{API_KEY}/I2790/json/{st}/{end}'
 response = requests.get(url).json()
-# print(response['I2790']['row'])
 for res in response['I2790']['row']:
     nutrient = {
-        'model': 'HDMD.nutritional',
-        'nutritionalNo': str(i),
+        'model': 'menus.nutritional',
+        'pk': str(i),
         'fields': {
-        'nutritionalName': res['DESC_KOR'],
-        'tan': res['NUTR_CONT2'],
-        'dan': res['NUTR_CONT3'],
-        'ji': res['NUTR_CONT4'],
-        'dang': res['NUTR_CONT5'],
-        'na': res['NUTR_CONT6'],
-        'cal': res['NUTR_CONT1'],
-        'col': res['NUTR_CONT7']
-    }}
+            'nutritionalname': res['DESC_KOR'],
+            'tan': 0 if not res['NUTR_CONT2'] else int(float(res['NUTR_CONT2'])),
+            'dan': 0 if not res['NUTR_CONT3'] else int(float(res['NUTR_CONT3'])),
+            'ji': 0 if not res['NUTR_CONT4'] else int(float(res['NUTR_CONT4'])),
+            'dang': 0 if not res['NUTR_CONT5'] else int(float(res['NUTR_CONT5'])),
+            'na': 0 if not res['NUTR_CONT6'] else int(float(res['NUTR_CONT6'])),
+            'cal': 0 if not res['NUTR_CONT1'] else int(float(res['NUTR_CONT1'])),
+            'col': 0 if not res['NUTR_CONT7'] else int(float(res['NUTR_CONT7']))
+        }
+    }
     i += 1
-    nutrient_dict['rows'].append(nutrient)
+    nutrient_list.append(nutrient)
 
 # Write JSON
-with open('nutrient.json', 'w', encoding="utf-8") as make_file:
-    json.dump(nutrient_dict, make_file, ensure_ascii=False, indent="\t")
+with open('nutritional/nutrient2.json', 'w', encoding="utf-8") as make_file:
+    json.dump(nutrient_list, make_file, ensure_ascii=False, indent="\t")
