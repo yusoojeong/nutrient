@@ -11,6 +11,17 @@ def search_nutrient(menu):
         '#content > .search_result_area'
     )
 
+    send_data = {
+        'nutritionalname': menu,
+        'tan': 0,
+        'dan': 0,
+        'ji': 0,
+        'dang': 0,
+        'na': 0,
+        'cal': 0,
+        'col': 0,
+    }
+
     for data in data_list:
         title = data.select(
             '.info_area > .subject > .title > a > strong'
@@ -19,14 +30,37 @@ def search_nutrient(menu):
             nutrient_list = str(data.select(
                 'p'
             )[0].text).replace('|', '-').replace(' ', '').replace(':', '').split('-')
-            print(nutrient_list)
             res_col = data.select(
                 ' .related > .info > .data'
             )[2].text
-            print(res_col)
+            break
+    
+    check_list = ['탄수화물', '단백질', '지방', '당류', '나트륨', '콜레스테롤']
+    name_list = ['tan', 'dan', 'ji', 'dang', 'na', 'col']
+    check_len = 0
+    
+    for i in range(0, 6):
+        check_len = len(check_list[i])
+        for nutrient in nutrient_list[1:]:
+            if check_list[i] in nutrient[:check_len]:
+                num = ''
+                for char in nutrient[check_len:]:
+                    if char.isdigit():
+                        num += char
+                    else:
+                        send_data[name_list[i]] = int(num)
+                        break
+                break
+    
+    num = ''
+    for char in res_col:
+        if char.isdigit():
+            num += char
+        else:
+            send_data['cal'] = int(num)
             break
 
-    print("=================")
+    return send_data
     
 
 search_nutrient('비빔밥')
