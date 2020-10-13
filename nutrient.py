@@ -60,6 +60,7 @@ def search_nutrient(menu):
             send_data['cal'] = int(num)
             break
 
+    print(send_data)
     return send_data
     
 
